@@ -13,7 +13,7 @@ public class FunctionalInterfaceExercise {
         filterByCity("New York");
     }
 
-    // Method to apply string transformation
+    // Method to apply string transformation using custom functional interface - StringTransformer
     public static List<String> transformStringList() {
         List<String> words = List.of("hello", "world", "java", "lambda");
         List<String> result = new ArrayList<>();
@@ -28,6 +28,8 @@ public class FunctionalInterfaceExercise {
 
         return result;
     }
+
+    // Predicate<T>, boolean test(t), Exercise
     public static List<Person> filterByAge(int age) {
         List<Person> persons = new ArrayList<>();
         persons.add(new Person("John", 28, "New York"));
@@ -45,6 +47,7 @@ public class FunctionalInterfaceExercise {
 //        return persons;
     }
 
+    // Predicate<T>, boolean test(t), Exercise
     public static List<Person> filterByCity(String city) {
         List<Person> persons = new ArrayList<>();
         persons.add(new Person("John", 28, "New York"));
@@ -62,6 +65,7 @@ public class FunctionalInterfaceExercise {
 //        return persons;
     }
 
+    // Predicate<T>, boolean test(t), Exercise
     public static List<Person> filter(List<Person> persons, Predicate<Person> predicate) {
         List<Person> filteredPersons = new ArrayList<>();
         for (Person person : persons) {
