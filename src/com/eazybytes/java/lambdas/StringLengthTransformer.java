@@ -1,10 +1,12 @@
 package com.eazybytes.java.lambdas;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
@@ -20,8 +22,10 @@ public class StringLengthTransformer {
 //        List<Integer> nums = Arrays.asList(1, 2, 3, 4, 5);
 //        incrementList(nums, 3);
 
-        List<String> inputString = Arrays.asList("apple", "banana", "carrot");
-        convertAndPrint(inputString);
+//        List<String> inputString = Arrays.asList("apple", "banana", "carrot");
+//        convertAndPrint(inputString);
+
+        getCurrentDayNameSupplier();
     }
 
     /**
@@ -59,11 +63,24 @@ public class StringLengthTransformer {
     }
 
     /**
-     * Consumer<T>, void accept(t), Exercise
+     * Consumer<T>, void accept(t) (like a "setter"), Exercise
      */
     public static void convertAndPrint(List<String> inputString) {
 
         Consumer<String> uppercaseConverter = input -> System.out.println(input.toUpperCase());
         inputString.forEach(uppercaseConverter);
+    }
+
+    /**
+     * Supplier<T>, T get() (like a "getter"), Exercise
+     */
+    public static String getCurrentDayNameSupplier() {
+
+        // Write your logic below
+        Supplier<String> currentDayName = () -> LocalDate.now().getDayOfWeek().name();
+
+        System.out.println(currentDayName.get());
+
+        return currentDayName.get();
     }
 }
