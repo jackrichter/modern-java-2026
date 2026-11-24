@@ -16,6 +16,7 @@ public class GathererExamples {
         mutableStateGatherer();
         parallelGatherer();
         interruptingGatherer();
+        chainingGatherer();
     }
 
     /// ## ***A basic example of a gatherer function***
@@ -150,6 +151,28 @@ public class GathererExamples {
         var result = largeList.stream()
                 .limit(10)
                 .gather(limitGatherer)
+                .toList();
+
+        System.out.println(result);
+    }
+
+    /// ## ***Gatherer function that chains multiple gatherers together***
+    private static void chainingGatherer() {
+
+        Gatherer<String, ?, String> upper =
+                Gatherer.of((_, element, downstream) ->
+                        downstream.push(element.toUpperCase()));
+
+        Gatherer<String, ?, String> filter =
+                Gatherer.of((_, element, downstream) -> {
+                    if (element.startsWith("J")) {
+                        downstream.push(element);
+                    }
+                    return true;
+                });
+
+        var result = Stream.of("java", "spring", "react")
+                .gather(upper.andThen(filter))
                 .toList();
 
         System.out.println(result);
