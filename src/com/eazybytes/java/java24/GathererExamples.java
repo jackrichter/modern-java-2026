@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Gatherer;
+import java.util.stream.Gatherers;
 import java.util.stream.Stream;
 
 public class GathererExamples {
@@ -18,6 +19,7 @@ public class GathererExamples {
         parallelGatherer();
         interruptingGatherer();
         chainingGatherer();
+        mapConcurrent();
     }
 
     /// ## ***A basic example of a gatherer function***
@@ -122,14 +124,14 @@ public class GathererExamples {
     /// ### ***With Initializer, Integrator, Combiner and Finisher***
     private static void parallelGatherer() {
         Gatherer<Integer, ?, Integer> parallelSum =
-                Gatherer.of(()->new AtomicInteger(),        // Initializer
+                Gatherer.of(() -> new AtomicInteger(),        // Initializer
                         (sum, number, downstream) -> {
                             System.out.printf("[Integrator] Thread: %s | number: %d%n",
                                     Thread.currentThread().getName(), number);
                             sum.addAndGet(number);
                             return true;
                         },
-                        (i1,i2) -> {
+                        (i1, i2) -> {
                             System.out.printf("[Combiner] Thread: %s | combining %d + %d%n",
                                     Thread.currentThread().getName(), i1.get(), i2.get());
                             i1.addAndGet(i2.get()); // combiner
@@ -196,5 +198,27 @@ public class GathererExamples {
                 .toList();
 
         System.out.println(result);
+    }
+
+    /// ## ***Class Gatherers factory function that maps elements concurrently***
+    private static void mapConcurrent() {
+        List<String> articles = List.of(
+                "Java is a high-level, class-based, object-oriented programming language.",
+                "Spring Boot makes it easy to create stand-alone, production-grade applications.",
+                "Microservices architecture enables better scalability and maintainability.",
+                "Text processing is a common use case for functional programming.",
+                "Streams in Java provide a modern way to process collections efficiently."
+        );
+
+        // Cont words concurrently using Gatherers.mapConcurrent
+        List<Integer> wordCount =
+                articles.parallelStream()
+                        .gather(Gatherers.mapConcurrent(10,
+                                article -> article.split("\\s+").length))
+                        .toList();
+
+        for (int i = 0; i < wordCount.size(); i++) {
+            System.out.printf("Article %d: word count = %d%n", (i + 1), wordCount.get(i));
+        }
     }
 }
