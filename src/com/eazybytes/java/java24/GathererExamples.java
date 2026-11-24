@@ -15,6 +15,7 @@ public class GathererExamples {
         finisherGatherer();
         mutableStateGatherer();
         parallelGatherer();
+        interruptingGatherer();
     }
 
     /// ## ***A basic example of a gatherer function***
@@ -122,6 +123,33 @@ public class GathererExamples {
         var result = Stream.of(10, 20, 30, 40, 50, 60)
                 .parallel()
                 .gather(parallelSum)
+                .toList();
+
+        System.out.println(result);
+    }
+
+    /// ## ***Gatherer function that gets interrupted by a limit operation***
+    /// ## Rules to remember:
+    /// - ***Downstream is going to start in non rejecting state***
+    /// - ***A downstream can only go from non-rejecting to rejecting***
+    /// - ***The state only changes when you push an element to it***
+    private static void interruptingGatherer() {
+
+        // Simulate a large list
+        List<Integer> largeList = Stream.iterate(1, i -> i + 1)
+                .limit(1000)
+                .toList();
+
+        Gatherer<Integer, ?, Integer> limitGatherer =
+                Gatherer.of(
+                        (_, element, downstream) -> {
+                            return downstream.push(element);    // Returns false when limit of 10 is reached, thus interrupting the gatherer
+                        }
+                );
+
+        var result = largeList.stream()
+                .limit(10)
+                .gather(limitGatherer)
                 .toList();
 
         System.out.println(result);
