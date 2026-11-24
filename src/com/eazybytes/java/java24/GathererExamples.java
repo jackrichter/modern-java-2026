@@ -20,6 +20,7 @@ public class GathererExamples {
         interruptingGatherer();
         chainingGatherer();
         mapConcurrent();
+        windowFixed();
     }
 
     /// ## ***A basic example of a gatherer function***
@@ -213,12 +214,22 @@ public class GathererExamples {
         // Cont words concurrently using Gatherers.mapConcurrent
         List<Integer> wordCount =
                 articles.parallelStream()
-                        .gather(Gatherers.mapConcurrent(10,
+                        .gather(Gatherers.mapConcurrent(10,     // 10: Number of concurrent threads
                                 article -> article.split("\\s+").length))
                         .toList();
 
         for (int i = 0; i < wordCount.size(); i++) {
             System.out.printf("Article %d: word count = %d%n", (i + 1), wordCount.get(i));
         }
+    }
+
+    /// ## ***Class Gatherers factory function that chunks data into fixed-size windows***
+    private static void windowFixed() {
+
+        var output = Stream.of(1, 2, 3, 4, 5, 6)
+                .gather(Gatherers.windowFixed(2))   // 2: chunk size
+                .toList();
+
+        System.out.println(output);
     }
 }
