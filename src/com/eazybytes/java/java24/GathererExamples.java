@@ -12,6 +12,7 @@ public class GathererExamples {
     static void main(String[] args) {
         helloGatherer();
         devFriendlyGatherer();
+        mapAndFilterGatherer();
         finisherGatherer();
         mutableStateGatherer();
         parallelGatherer();
@@ -44,6 +45,25 @@ public class GathererExamples {
                 .toList();
 
         System.out.println(result);
+    }
+
+    /// ## ***A gatherer function that maps and filters elements***
+    private static void mapAndFilterGatherer() {
+
+        Gatherer<String, ?, String> fileterAndMapGatherer =
+                Gatherer.of((_, element, downstream) -> {
+                    if (element.startsWith("a")) {
+                        downstream.push(element.toUpperCase());
+                    }
+                    return true;
+                });
+
+        var result = Stream.of("apple", "banana", "avocado", "grape")
+                .gather(fileterAndMapGatherer)
+                .toList();
+
+        System.out.println(result);
+
     }
 
     /// ## ***A gatherer function with an Initializer of a mutable state, an Integrator and a finisher***
